@@ -1,0 +1,17 @@
+{
+    "short_name": "Emil was here",
+    "name": "Emil was here",
+    "start_url": "/washere",
+    "scope": "/washere",
+    "display": "standalone",
+    "theme_color": "#2D2D2D",
+    "background_color": "#2D2D2D",
+    "icons": [
+        {
+            "src": "images/diamond-half-white.svg",
+            "sizes": "144x144",
+            "type": "image/png",
+            "purpose": "any"
+        }
+    ]
+}

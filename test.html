@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test</title>
+</head>
+
+<body>
+    <div id="insert">
+
+
+
+    </div>
+    <script>
+
+        fetch("./getplaces.php")
+            .then((response) => response.json())
+            .then((dataArray) => {
+                console.log(dataArray);
+                dataArray.forEach((data) => {
+                    document.getElementById("insert").innerHTML += `
+            Name: ${data.name}<br>
+            Coords: [${data.lat},${data.lon}]<br>
+            Desc: ${data.html_desc}<br>
+            Category: ${data.category}<br>
+        `; if (data.image) {
+            document.getElementById("insert").innerHTML += `
+            Image: <br>
+            <img src="data:image/png;base64,${data.image}"><br>`
+        }
+
+                });
+                
+            })
+            .catch((error) => console.log(error));
+
+
+
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="images/diamond-half-gold.svg" />
+    <link rel="stylesheet" href="main.css" />
+    <title>Add Place</title>
+  </head>
+  <body>
+    <style>
+      body {
+        background-color: #111;
+        color: #c0c0c0;
+        padding: 1rem;
+      }
+
+      form textarea {
+        width: 15rem;
+        height: 5rem;
+      }
+
+      a {
+        color: #c0c0c0;
+        text-decoration: none;
+      }
+
+      a:hover {
+        color: #aea787;
+      }
+    </style>
+
+    <div style="display: flex; gap: 1rem">
+      <h3 style="color: #aea787">Add Place</h3>
+      <a href="edit.html"><h3>Edit Place</h3></a>
+    </div>
+    <hr style="margin-top: 1rem; border: none; border-top: 1px solid #333" />
+    &nbsp;
+
+    <form method="post" id="place_form" enctype="multipart/form-data">
+      <p>
+        Name:<br />
+        <input type="text" name="place_name" id="place_name" required /><br />
+        Coordinates (lat,long):<br />
+        <input
+          type="text"
+          name="place_coords"
+          id="place_coords"
+          pattern="^-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?$"
+          required
+        /><br />
+        Description: <br />
+        <textarea name="place_desc" id="place_desc"></textarea><br />
+        Category:<br />
+        <select name="place_category" id="place_category" required>
+          <option value="rural">rural/other</option>
+          <option value="minor">minor</option>
+          <option value="major_medium">major medium</option>
+          <option value="major_big">major big</option>
+          <option value="airport">airport/layover</option>
+          </select><br />
+        Special/Capital:<br />
+        <select name="place_special" id="place_special" required>
+          <option value="none">none</option>
+          <option value="special">special</option>
+          <option value="capital">capital</option></select
+        ><br />
+        Image:<br />
+        URL: <input type="text" name="place_image_url" id="place_image_url" /><br />
+        or: <input type="file" name="place_image" id="place_image" /><br />
+        &nbsp;<br />
+        Password:<br />
+        <input type="password" name="place_pwd" id="place_pwd" required /><br />
+        &nbsp;
+      </p>
+      <button type="submit" id="place_submit">Submit</button>
+    </form>
+
+    <div id="response" style="margin-top: 1rem; white-space: pre-wrap"></div>
+
+    <script>
+      document.getElementById("place_desc").value =
+        "\nCountry: \nPopulation: \nVisited:";
+
+      document
+        .getElementById("place_form")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+          var form = document.getElementById("place_form");
+          var formData = new FormData(form);
+          var xhr = new XMLHttpRequest();
+          xhr.open("POST", "./api/addplace.php", true);
+          xhr.onload = function () {
+            if (xhr.status == 200) {
+              document.getElementById("response").innerHTML = xhr.responseText;
+            }
+          };
+          xhr.onerror = function () {
+            document.getElementById("response").innerHTML =
+              "Error: " + xhr.statusText;
+          };
+          xhr.send(formData);
+        });
+    </script>
+  </body>
+</html>
