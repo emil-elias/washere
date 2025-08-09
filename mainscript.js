@@ -68,6 +68,16 @@ fetch("./api/getplaces.php")
     places.forEach((place) => {
       if (!place.lat || !place.lon) return;
 
+      let akaString = place.aka != "" ? `<i>${place.aka}</i><br>&nbsp;<br>` : `&nbsp;<br>`;
+      //let capitalString = place.category.includes("capital") ? " (Capital)" : ""; 
+      let capitalString = "";
+      let populationString = place.population != "0" ? `<br>Population: ${Number(place.population).toLocaleString('en-US')}` : "";
+      let dateString = place.date != "" ? `<br>${place.status}: ${place.date}` : "";
+
+      if (populationString != "" && place.population_metro != "0") {
+        populationString += ` (${Number(place.population_metro).toLocaleString('en-US')})`;
+      }
+
       let icon = L.icon({
         iconUrl: determineIcon(place.category),
         iconAnchor: [9.5, 9.5],
@@ -77,15 +87,33 @@ fetch("./api/getplaces.php")
         iconSize: determineIconSize(place.category),
       });
 
+
       let marker = L.marker([place.lat, place.lon], { icon: icon }).addTo(map);
+
+      if (place.status != "Visited" && place.status != "Lived") {
+        marker.setOpacity(0.5);
+      }
 
       if (place.image_url && place.image_url.trim() != "") {
         marker.bindPopup(
-          `<img src='${place.image_url}' onclick='showImg("${place.image_url}")'><div class='popup-textcontent' style='min-width: 15rem'><h3>${place.name}</h3>${place.html_desc}</div>`
+          `<img src='${place.image_url}' onclick='showImg("${place.image_url}")'>
+          <div class='popup-textcontent' style='min-width: 15rem; max-width: 15rem'>
+          <h3>${place.name}</h3>
+          ${akaString}
+          Country: ${place.country}${capitalString}
+          ${populationString}
+          ${dateString}
+          </div>`
         );
       } else {
         marker.bindPopup(
-          `<div class='popup-textcontent'><h3>${place.name}</h3>${place.html_desc}</div>`
+          `<div class='popup-textcontent'>
+          <h3>${place.name}</h3>
+          ${akaString}
+          Country: ${place.country}${capitalString}
+          ${populationString}
+          ${dateString}
+          </div>`
         );
       }
     });

@@ -50,8 +50,8 @@
   <p>
     Search: &nbsp;<input type="text" name="search" id="search" style="margin-right: 1rem" /><button id="places_search"
       style="margin-right: 1rem">Search</button><br>
-      <hr style="margin-top: 1rem; border: none; border-top: 1px solid #333" /><br>
-      Password: &nbsp;<input type="password" name="pwd" id="pwd" style="margin-right: 1rem" required />
+    <hr style="margin-top: 1rem; border: none; border-top: 1px solid #333" /><br>
+    Password: &nbsp;<input type="password" name="pwd" id="pwd" style="margin-right: 1rem" required />
   </p>
   <hr style="margin-top: 1rem; border: none; border-top: 1px solid #333" />
   &nbsp;
@@ -69,8 +69,13 @@
           data.forEach((place) => {
             var place_id = place.id;
             var place_name = place.name;
+            var place_aka = place.aka;
             var place_coords = place.lat + ", " + place.lon;
+            var place_country = place.country;
             var place_desc = place.html_desc;
+            var place_population = parseInt(place.population);
+            var place_date = place.date;
+            var place_status = place.status;
             var place_category = place.category;
             var place_special = "none";
             var old_place_image_url = place.image_url;
@@ -92,6 +97,8 @@
                       <p>
                         Name:<br />
                         <input type="text" name="place_name" id="place_name_${place_id}" value="${place_name}" required /><br />
+                        Aka:<br />
+                        <input type="text" name="place_aka" id="place_aka_${place_id}" value="${place_aka}"><br/>
                         Coordinates (lat,long):<br />
                         <input
                           type="text"
@@ -100,8 +107,21 @@
                           value="${place_coords}"
                           required
                         /><br />
+                        Country: <br>
+                        <input type="text" name="place_country" id="place_country_${place_id}" value="${place_country}" required><br>
                         Description: <br />
                         <textarea name="place_desc" id="place_desc_${place_id}">${place_desc}</textarea><br />
+                        Population: <br>
+                        <input type="number" name="place_population" id="place_population_${place_id}" value="${place_population}"><br>
+                        Date: <br>
+                        <input type="text" name="place_date" id="place_date_${place_id}" value="${place_date}"><br>
+                        Status: <br>
+                        <select name="place_status" id="place_status_${place_id}" value="${place_status}">
+                          <option value="Visited">visited</option>
+                          <option value="Stopped by">stopped by</option>
+                          <option value="Layover">layover</option>
+                          <option value="Lived">lived</option>
+                        </select><br>
                         Category:<br />
                         <select name="place_category" id="place_category_${place_id}" required>
                           <option value="rural">rural/other</option>
@@ -132,6 +152,7 @@
               place_category;
             document.getElementById(`place_special_${place_id}`).value =
               place_special;
+            document.getElementById(`place_status_${place_id}`).value = place.status;
 
             const resultDiv = document.createElement("div");
             resultDiv.id = `response_${place_id}`;
