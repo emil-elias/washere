@@ -185,7 +185,7 @@ function determineIconSize(category) {
   if (category && category.includes("big")) {
     return [20, 20];
   } else if (category && category.includes("medium")) {
-    return [15, 15];
+    return [17.5, 17.5];
   } else return [15, 15];
 }
 
