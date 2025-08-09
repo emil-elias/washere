@@ -8,13 +8,13 @@ $stats = array();
 
 $sql = "SELECT 
     c.name AS country, 
-    COUNT(p.html_desc) AS places
+    COUNT(p.country) AS places
 FROM 
     washere_countries AS c
 JOIN 
     washere_places AS p
 ON 
-    p.html_desc LIKE CONCAT('%', c.name, '%')
+    p.country LIKE CONCAT('%', c.name, '%')
 GROUP BY 
     c.name
 ORDER BY

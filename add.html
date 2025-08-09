@@ -13,6 +13,7 @@
         background-color: #111;
         color: #c0c0c0;
         padding: 1rem;
+        overflow-y: scroll;
       }
 
       form textarea {
@@ -41,6 +42,8 @@
       <p>
         Name:<br />
         <input type="text" name="place_name" id="place_name" required /><br />
+        Aka:<br />
+        <input type="text" name="place_aka" id="place_aka"><br/>
         Coordinates (lat,long):<br />
         <input
           type="text"
@@ -49,8 +52,21 @@
           pattern="^-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?$"
           required
         /><br />
+        Country: <br>
+        <input type="text" name="place_country" id="place_country" required><br>
         Description: <br />
         <textarea name="place_desc" id="place_desc"></textarea><br />
+        Population: <br>
+        <input type="number" name="place_population" id="place_population"><br>
+        Date: <br>
+        <input type="text" name="place_date" id="place_date"><br>
+        Status: <br>
+        <select name="place_status" id="place_status">
+          <option value="Visited">visited</option>
+          <option value="Stopped by">stopped by</option>
+          <option value="Layover">layover</option>
+          <option value="Lived">lived</option>
+        </select><br>
         Category:<br />
         <select name="place_category" id="place_category" required>
           <option value="rural">rural/other</option>
@@ -79,8 +95,8 @@
     <div id="response" style="margin-top: 1rem; white-space: pre-wrap"></div>
 
     <script>
-      document.getElementById("place_desc").value =
-        "\nCountry: \nPopulation: \nVisited:";
+      /*document.getElementById("place_desc").value =
+        "\nCountry: \nPopulation: \nVisited:";*/
 
       document
         .getElementById("place_form")

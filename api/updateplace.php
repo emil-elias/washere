@@ -18,11 +18,21 @@ $id = $_POST['place_id'];
 
 $name = $_POST['place_name'];
 $name = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $name);
-$coords = $_POST['place_coords'];
 
+if (isset($_POST['place_aka'])) {
+    $aka = $_POST['place_aka'];
+    $aka = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $aka);
+} else {
+    $aka = "";
+}
+
+$coords = $_POST['place_coords'];
 $exploded_coords = explode(",", $coords);
 $lat = floatval($exploded_coords[0]);
 $lon = floatval($exploded_coords[1]);
+
+$country = $_POST['place_country'];
+$country = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $country);
 
 if (isset($_POST['place_desc'])) {
     //$html_desc = nl2br($_POST['place_desc']);
@@ -30,6 +40,25 @@ if (isset($_POST['place_desc'])) {
     $html_desc = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $html_desc);
 } else {
     $html_desc = "";
+}
+
+if (isset($_POST['place_population'])) {
+    $population = intval($_POST['place_population']);
+} else {
+    $population = 0;
+}
+
+if (isset($_POST['place_date'])) {
+    $date = $_POST['place_date'];
+    $date = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $date);
+} else {
+    $date = "";
+}
+
+if (isset($_POST['place_status'])) {
+    $status = $_POST['place_status'];
+} else {
+    $status = "Visited";
 }
 
 if (isset($_POST['place_category'])) {
@@ -46,9 +75,9 @@ $link = connectDB();
 
 
 if ($_POST['place_image_option'] == "keep") {
-    $sql = 'UPDATE `washere_places` SET `name` = ?, `lat` = ?, `lon` = ?, `html_desc` = ?, `category` = ? WHERE `id` = ?';
+    $sql = 'UPDATE `washere_places` SET `name` = ?, `aka` = ?, `lat` = ?, `lon` = ?, `html_desc` = ?, `category` = ?, `country` = ?, `population` = ?, `date` = ?, `status` = ? WHERE `id` = ?';
     $stmt = $link->prepare($sql);
-    $stmt->bind_param("sddssi", $name, $lat, $lon, $html_desc, $category, $id);
+    $stmt->bind_param("ssddsssissi", $name, $aka, $lat, $lon, $html_desc, $category, $country, $population, $date, $status, $id);
     $result = $stmt->execute();
 }
 else {
@@ -76,9 +105,9 @@ else {
         }
     }
 
-    $sql = 'UPDATE `washere_places` SET `name` = ?, `lat` = ?, `lon` = ?, `html_desc` = ?, `category` = ?, `image_url` = ? WHERE `id` = ?';
+    $sql = 'UPDATE `washere_places` SET `name` = ?, `aka` = ?, `lat` = ?, `lon` = ?, `html_desc` = ?, `category` = ?, `country` = ?, `population` = ?, `date` = ?, `status` = ?, `image_url` = ? WHERE `id` = ?';
     $stmt = $link->prepare($sql);
-    $stmt->bind_param("sddsssi", $name, $lat, $lon, $html_desc, $category, $image_url, $id);
+    $stmt->bind_param("ssddsssisssi", $name, $aka, $lat, $lon, $html_desc, $category, $country, $population, $date, $status, $image_url, $id);
     $stmt->send_long_data(5, $image);
     $result = $stmt->execute();
 } 
