@@ -2,8 +2,8 @@
 -- version 4.9.11
 -- https://www.phpmyadmin.net/
 --
--- Host: 
--- Erstellungszeit: 03. Apr 2025 um 01:01
+-- Host: db5014679773.hosting-data.io
+-- Erstellungszeit: 08. Sep 2025 um 16:53
 -- Server-Version: 8.0.36
 -- PHP-Version: 7.4.33
 
@@ -32,39 +32,42 @@ CREATE TABLE `washere_countries` (
   `id` int NOT NULL,
   `name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
   `continent` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `valid` int NOT NULL
+  `valid` int NOT NULL,
+  `song` varchar(200) COLLATE utf8mb4_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Daten für Tabelle `washere_countries`
 --
 
-INSERT INTO `washere_countries` (`id`, `name`, `continent`, `valid`) VALUES
-(1, 'Germany', 'Europe', 1),
-(2, 'Netherlands', 'Europe', 1),
-(3, 'Denmark', 'Europe', 1),
-(4, 'Norway', 'Europe', 1),
-(5, 'Sweden', 'Europe', 1),
-(6, 'United Kingdom', 'Europe', 1),
-(8, 'Belgium', 'Europe', 1),
-(9, 'France', 'Europe', 1),
-(10, 'Spain', 'Europe', 1),
-(11, 'Portugal', 'Europe', 1),
-(12, 'Czech Republic', 'Europe', 1),
-(13, 'Austria', 'Europe', 1),
-(14, 'Slovakia', 'Europe', 1),
-(15, 'Italy', 'Europe', 1),
-(16, 'Slovenia', 'Europe', 1),
-(17, 'India', 'Asia', 0),
-(18, 'Thailand', 'Asia', 1),
-(19, 'Malaysia', 'Asia', 1),
-(20, 'Singapore', 'Asia', 1),
-(21, 'Vietnam', 'Asia', 1),
-(22, 'Cambodia', 'Asia', 1),
-(23, 'Laos', 'Asia', 0),
-(24, 'Hong Kong', 'Asia', 1),
-(25, 'Japan', 'Asia', 1),
-(26, 'Turkey', 'Asia', 0);
+INSERT INTO `washere_countries` (`id`, `name`, `continent`, `valid`, `song`) VALUES
+(1, 'Germany', 'Europe', 1, ''),
+(2, 'Netherlands', 'Europe', 1, ''),
+(3, 'Denmark', 'Europe', 1, 'Faxe Kondi - Klumben, Raske Penge'),
+(4, 'Norway', 'Europe', 1, ''),
+(5, 'Sweden', 'Europe', 1, ''),
+(6, 'United Kingdom', 'Europe', 1, ''),
+(8, 'Belgium', 'Europe', 1, ''),
+(9, 'France', 'Europe', 1, ''),
+(10, 'Spain', 'Europe', 1, ''),
+(11, 'Portugal', 'Europe', 1, ''),
+(12, 'Czech Republic', 'Europe', 1, ''),
+(13, 'Austria', 'Europe', 1, ''),
+(14, 'Slovakia', 'Europe', 1, ''),
+(15, 'Italy', 'Europe', 1, ''),
+(16, 'Slovenia', 'Europe', 1, ''),
+(17, 'India', 'Asia', 0, ''),
+(18, 'Thailand', 'Asia', 1, 'Hot Blooded - New Constellations'),
+(19, 'Malaysia', 'Asia', 1, ''),
+(20, 'Singapore', 'Asia', 1, ''),
+(21, 'Vietnam', 'Asia', 1, ''),
+(22, 'Cambodia', 'Asia', 1, ''),
+(23, 'Laos', 'Asia', 0, ''),
+(24, 'Hong Kong', 'Asia', 1, ''),
+(25, 'Japan', 'Asia', 1, ''),
+(26, 'Turkey', 'Asia', 0, ''),
+(27, 'Hungary', 'Europe', 1, ''),
+(28, 'Poland', 'Europe', 1, '');
 
 --
 -- Indizes der exportierten Tabellen
@@ -84,7 +87,7 @@ ALTER TABLE `washere_countries`
 -- AUTO_INCREMENT für Tabelle `washere_countries`
 --
 ALTER TABLE `washere_countries`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
