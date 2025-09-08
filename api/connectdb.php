@@ -3,6 +3,7 @@
 $hashed_control_value = "";
 $domain = "";
 
+
 function connectDB()
 {
 
