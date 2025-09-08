@@ -1,13 +1,17 @@
 <?php
 include_once 'connectdb.php';
 
-$search = $_GET['search'];
+$search = "%" . $_GET['search'] . "%";
 
 $link = connectDB();
 
-$sql = 'SELECT `id`,`name`, `aka`, `lat`, `lon`, `html_desc`, `category`, `country`, `population`, `date`, `status`, `image_url` from `washere_places` WHERE `name` LIKE "%' . $search . '%" or `aka` LIKE "%' . $search . '%"';
+$sql = 'SELECT `id`,`name`, `aka`, `lat`, `lon`, `html_desc`, `category`, `country`, `population`, `date`, `status`, `image_url` from `washere_places` WHERE `name` LIKE ? or `aka` LIKE ?';
 
-$result = $link->query($sql);
+$stmt = $link->prepare($sql);
+$stmt->bind_param("ss", $search, $search);
+
+$stmt->execute();
+$result = $stmt->get_result();
 
 $places = array();
 
