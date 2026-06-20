@@ -3,7 +3,27 @@ include_once 'connectdb.php';
 
 $link = connectDB();
 
+if (isset($_GET['w'])) {
+    $with = $_GET['w'];
+}
+
+if (isset($_GET['y'])) {
+    $year = $_GET['y'];
+}
+
 $sql = 'SELECT `id`, `name`, `aka`, `lat`, `lon`, `html_desc`, `category`, `country`, `population`, `population_metro`, `date`, `status`, `image_url` from `washere_places`';
+
+if (isset($with)) {
+    $sql .= " WHERE (`company` LIKE '%" . $link->real_escape_string($with) . "%')";
+}
+
+if (isset($year)) {
+    if (strpos($sql, 'WHERE') !== false) {
+        $sql .= " AND (`date` LIKE '%" . intval($year) . "%' OR `date` LIKE '%many times%')";
+    } else {
+        $sql .= " WHERE (`date` LIKE '%" . intval($year) . "%' OR `date` LIKE '%many times%')";
+    }
+}
 
 $result = $link->query($sql);
 

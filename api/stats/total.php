@@ -4,9 +4,21 @@ include_once '../connectdb.php';
 
 $link = connectDB();
 
+$andWhere = "";
+
+if (isset($_GET['w'])) {
+    $with = $_GET['w'];
+    $andWhere .= " AND (`company` LIKE '%" . $link->real_escape_string($with) . "%')";
+}
+
+if (isset($_GET['y'])) {
+    $year = $_GET['y'];
+    $andWhere .= " AND (`date` LIKE '%" . intval($year) . "%' OR `date` LIKE '%many times%')";
+}
+
 $stats = array();
 
-$sql = 'SELECT COUNT(*) FROM washere_places';
+$sql = 'SELECT COUNT(*) FROM washere_places WHERE 1' . $andWhere;
 
 $result = $link->query($sql);
 
@@ -17,7 +29,7 @@ if ($result->num_rows > 0) {
     $stats["total_places"] = 0;
 }
 
-$sql = 'SELECT COUNT(*) FROM washere_places WHERE category LIKE "%rural%"';
+$sql = 'SELECT COUNT(*) FROM washere_places WHERE category LIKE "%rural%"' . $andWhere;
 
 $result = $link->query($sql);
 
@@ -28,7 +40,7 @@ if ($result->num_rows > 0) {
     $stats["rural_places"] = 0;
 }
 
-$sql = 'SELECT COUNT(*) FROM washere_places WHERE category LIKE "%minor%"';
+$sql = 'SELECT COUNT(*) FROM washere_places WHERE category LIKE "%minor%"' . $andWhere;
 
 $result = $link->query($sql);
 
@@ -39,7 +51,7 @@ if ($result->num_rows > 0) {
     $stats["minor_places"] = 0;
 }
 
-$sql = 'SELECT COUNT(*) FROM washere_places WHERE category LIKE "%major%"';
+$sql = 'SELECT COUNT(*) FROM washere_places WHERE category LIKE "%major%"' . $andWhere;
 
 $result = $link->query($sql);
 
@@ -50,7 +62,7 @@ if ($result->num_rows > 0) {
     $stats["major_places"] = 0;
 }
 
-$sql = 'SELECT COUNT(*) FROM washere_places WHERE category LIKE "%special%"';
+$sql = 'SELECT COUNT(*) FROM washere_places WHERE category LIKE "%special%"' . $andWhere;
 
 $result = $link->query($sql);
 
@@ -61,7 +73,7 @@ if ($result->num_rows > 0) {
     $stats["special_places"] = 0;
 }
 
-$sql = 'SELECT COUNT(*) FROM washere_places WHERE category LIKE "%capital%"';
+$sql = 'SELECT COUNT(*) FROM washere_places WHERE category LIKE "%capital%"' . $andWhere;
 
 $result = $link->query($sql);
 
