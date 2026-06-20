@@ -1,3 +1,18 @@
+//get search parameters
+const urlParams = new URLSearchParams(window.location.search);
+const withParam = urlParams.get('w');
+const yearParam = urlParams.get('y');
+
+var queries = "";
+
+if (withParam) {
+  queries += `?w=${encodeURIComponent(withParam)}`;
+}
+
+if (yearParam) {
+  queries += withParam ? `&y=${encodeURIComponent(yearParam)}` : `?y=${encodeURIComponent(yearParam)}`;
+}
+
 var map = L.map("map", {
   attributionControl: false,
   worldCopyJump: true,
@@ -60,7 +75,7 @@ fetch("./api/getcountries.php")
   })
   .catch((error) => console.log(error));*/
 
-fetch("./api/getplaces.php")
+fetch(`./api/getplaces.php${queries}`)
   .then((response) => response.json())
   .then((data) => {
     places = data;
@@ -122,7 +137,7 @@ fetch("./api/getplaces.php")
   })
   .catch((error) => console.log(error));
 
-fetch("./api/stats/total.php")
+fetch(`./api/stats/total.php${queries}`)
   .then((response) => response.json())
   .then((data) => {
     data;
