@@ -46,6 +46,12 @@ if (isset($_POST['place_population'])) {
     $population = 0;
 }
 
+if (isset($_POST['place_metro_population'])) {
+    $population_metro = intval($_POST['place_metro_population']);
+} else {
+    $population_metro = 0;
+}
+
 if (isset($_POST['place_date'])) {
     $date = $_POST['place_date'];
     $date = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $date);
@@ -53,20 +59,34 @@ if (isset($_POST['place_date'])) {
     $date = "";
 }
 
+if (isset($_POST['place_company'])) {
+    $company = $_POST['place_company'];
+    $company = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $company);
+} else {
+    $company = "";
+}
+
+if (isset($_POST['place_song'])) {
+    $song = $_POST['place_song'];
+    $song = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $song);
+} else {
+    $song = "";
+}
+
 if (isset($_POST['place_status'])) {
     $status = $_POST['place_status'];
 } else {
-    $status = "Visited";
+    $status = 1;
 }
 
 if (isset($_POST['place_category'])) {
     $category = $_POST['place_category'];
 } else {
-    $category = "rural";
+    $category = 32;
 }
 
 if (isset($_POST['place_special']) && $_POST['place_special'] != "none") {
-    $category .= "_" . $_POST['place_special'];
+    $category -= $_POST['place_special'];
 }
 
 $image_url = "";
@@ -82,9 +102,9 @@ $link = connectDB();
 
 //$image = $link->real_escape_string($image);
 
-$sql = 'INSERT INTO `washere_places` (`name`, `aka`, `lat`, `lon`, `html_desc`, `category`, `country`, `population`, `date`, `status`, `image_url`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+$sql = 'INSERT INTO `washere_places` (`name`, `aka`, `lat`, `lon`, `html_desc`, `category_id`, `country`, `population`, `population_metro`, `date`, `company`, `song`, `status_id`, `image_url`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 $stmt = $link->prepare($sql);
-$stmt->bind_param("ssddsssisss", $name, $aka, $lat, $lon, $html_desc, $category, $country, $population, $date, $status, $image_url);
+$stmt->bind_param("ssddsisiisssis", $name, $aka, $lat, $lon, $html_desc, $category, $country, $population, $population_metro, $date, $company, $song, $status, $image_url);
 $stmt->send_long_data(5, $image);
 $result = $stmt->execute();
 

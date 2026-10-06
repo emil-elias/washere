@@ -5,7 +5,7 @@ $search = "%" . $_GET['search'] . "%";
 
 $link = connectDB();
 
-$sql = 'SELECT `id`,`name`, `aka`, `lat`, `lon`, `html_desc`, `category`, `country`, `population`, `date`, `status`, `image_url` from `washere_places` WHERE `name` LIKE ? or `aka` LIKE ?';
+$sql = 'SELECT `id`,`name`, `aka`, `lat`, `lon`, `html_desc`, `category_id`, `country`, `population`, `population_metro`, `date`, `company`, `song`, `status_id`, `image_url` from `washere_places` WHERE `name` LIKE ? or `aka` LIKE ?';
 
 $stmt = $link->prepare($sql);
 $stmt->bind_param("ss", $search, $search);

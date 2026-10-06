@@ -23,15 +23,15 @@ var map = L.map("map", {
   ],
 }).setView([53.07724756278127, 8.801302178162215], 3);
 
-L.control
+/*L.control
   .attribution({
     position: "topright"
   })
-  .addTo(map);
+  .addTo(map);*/
 
 L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-  attribution:
-    '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+  /*attribution:
+    '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',*/
   opacity: 0.5,
   className: "map",
 }).addTo(map);
@@ -83,29 +83,30 @@ fetch(`./api/getplaces.php${queries}`)
     places.forEach((place) => {
       if (!place.lat || !place.lon) return;
 
-      let akaString = place.aka != "" ? `<i>${place.aka}</i><br>&nbsp;<br>` : `&nbsp;<br>`;
+      let akaString = place.aka != "" ? `<i>${place.aka}</i>` : ``;
       //let capitalString = place.category.includes("capital") ? " (Capital)" : ""; 
       let capitalString = "";
       let populationString = place.population != "0" ? `<br>Population: ${Number(place.population).toLocaleString('en-US')}` : "";
       let dateString = place.date != "" ? `<br>${place.status}: ${place.date}` : "";
+      let descString = place.html_desc != "" ? `<br><hr style="margin-top: 1rem; margin-bottom: 1rem; border: none; border-top: 1px solid #333" />${place.html_desc}` : "";
 
       if (populationString != "" && place.population_metro != "0") {
         populationString += ` (${Number(place.population_metro).toLocaleString('en-US')})`;
       }
 
       let icon = L.icon({
-        iconUrl: determineIcon(place.category),
+        iconUrl: determineIcon(parseInt(place.category_id)),
         iconAnchor: [9.5, 9.5],
         popupAnchor: [0, 0],
         shadowSize: [50, 50],
         shadowAnchor: [9.5, 9.5],
-        iconSize: determineIconSize(place.category),
+        iconSize: determineIconSize(parseInt(place.category_id)),
       });
 
 
       let marker = L.marker([place.lat, place.lon], { icon: icon }).addTo(map);
 
-      if (place.status != "Visited" && place.status != "Lived") {
+      if (place.status_id != "1" && place.status_id != "0") {
         marker.setOpacity(0.5);
       }
 
@@ -115,9 +116,11 @@ fetch(`./api/getplaces.php${queries}`)
           <div class='popup-textcontent' style='min-width: 15rem; max-width: 15rem'>
           <h3>${place.name}</h3>
           ${akaString}
+          <hr style="margin-top: 1rem; margin-bottom: 1rem; border: none; border-top: 1px solid #333" />
           Country: ${place.country}${capitalString}
           ${populationString}
           ${dateString}
+          ${descString}
           </div>`
         );
       } else {
@@ -125,9 +128,11 @@ fetch(`./api/getplaces.php${queries}`)
           `<div class='popup-textcontent'>
           <h3>${place.name}</h3>
           ${akaString}
+          <hr style="margin-top: 1rem; margin-bottom: 1rem; border: none; border-top: 1px solid #333" />
           Country: ${place.country}${capitalString}
           ${populationString}
           ${dateString}
+          ${descString}
           </div>`
         );
       }
@@ -151,8 +156,11 @@ fetch(`./api/stats/total.php${queries}`)
     document.getElementById("rural_places").innerText = data.rural_places;
     document.getElementById("minor_places").innerText = data.minor_places;
     document.getElementById("major_places").innerText = data.major_places;
+    document.getElementById("major_big_places").innerText = data.major_big_places;
     document.getElementById("special_places").innerText = data.special_places;
     document.getElementById("capitals").innerText = data.capitals;
+    document.getElementById("terminals").innerText = data.terminals;
+    document.getElementById("parks").innerText = data.parks;
   })
   .catch((error) => console.log(error));
 
@@ -171,35 +179,47 @@ function toggleLegend() {
   }
 }
 
-function determineIcon(category) {
-  if (category) {
-    switch (category) {
-      case "rural":
-        return "images/diamond-white.svg";
-      case "rural_special":
-        return "images/diamond-gold.svg";
-      case "minor":
+function determineIcon(category_id) {
+  if (category_id) {
+    switch (category_id) {
+      case 2:
+      case 12:
+        return "images/diamond-fill-white.svg";
+      case 1:
+      case 0:
+      case 11:
+      case 10:
+        return "images/diamond-fill-gold.svg";
+      case 22:
         return "images/diamond-half-white.svg";
-      case "minor_special":
+      case 21:
+      case 20:
         return "images/diamond-half-gold.svg";
-      case "minor_capital":
-        return "images/diamond-half-gold.svg";
+      case 32:
+        return "images/diamond-white.svg";
+      case 30:
+        return "images/diamond-gold.svg";
+      case 42: 
+        return "images/square-white.svg";
+      case 40: 
+        return "images/square-gold.svg";
+      case 52:
+        return "images/circle-white.svg";
+      case 50:
+        return "images/circle-gold.svg";
+      default:
+        return "images/diamond-white.svg";
     }
 
-    if (category.includes("major")) {
-      if (category.includes("special") || category.includes("capital")) {
-        return "images/diamond-fill-gold.svg";
-      } else return "images/diamond-fill-white.svg";
-    }
   }
 
   return "images/diamond-white.svg";
 }
 
-function determineIconSize(category) {
-  if (category && category.includes("big")) {
+function determineIconSize(category_id) {
+  if (category_id && category_id < 10) {
     return [20, 20];
-  } else if (category && category.includes("medium")) {
+  } else if (category_id && category_id >= 10 && category_id < 20) {
     return [17.5, 17.5];
   } else return [15, 15];
 }

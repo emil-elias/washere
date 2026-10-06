@@ -48,6 +48,12 @@ if (isset($_POST['place_population'])) {
     $population = 0;
 }
 
+if (isset($_POST['place_metro_population'])) {
+    $population_metro = intval($_POST['place_metro_population']);
+} else {
+    $population_metro = 0;
+}
+
 if (isset($_POST['place_date'])) {
     $date = $_POST['place_date'];
     $date = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $date);
@@ -55,29 +61,43 @@ if (isset($_POST['place_date'])) {
     $date = "";
 }
 
-if (isset($_POST['place_status'])) {
-    $status = $_POST['place_status'];
+if (isset($_POST['place_company'])) {
+    $company = $_POST['place_company'];
+    $company = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $company);
 } else {
-    $status = "Visited";
+    $company = "";
+}
+
+if (isset($_POST['place_song'])) {
+    $song = $_POST['place_song'];
+    $song = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $song);
+} else {
+    $song = "";
+}
+
+if (isset($_POST['place_status'])) {
+    $status = intval($_POST['place_status']);
+} else {
+    $status = 1;
 }
 
 if (isset($_POST['place_category'])) {
-    $category = $_POST['place_category'];
+    $category = intval($_POST['place_category']);
 } else {
-    $category = "rural";
+    $category = 32;
 }
 
 if (isset($_POST['place_special']) && $_POST['place_special'] != "none") {
-    $category .= "_" . $_POST['place_special'];
+    $category -= intval($_POST['place_special']);
 }
 
 $link = connectDB();
 
 
 if ($_POST['place_image_option'] == "keep") {
-    $sql = 'UPDATE `washere_places` SET `name` = ?, `aka` = ?, `lat` = ?, `lon` = ?, `html_desc` = ?, `category` = ?, `country` = ?, `population` = ?, `date` = ?, `status` = ? WHERE `id` = ?';
+    $sql = 'UPDATE `washere_places` SET `name` = ?, `aka` = ?, `lat` = ?, `lon` = ?, `html_desc` = ?, `category_id` = ?, `country` = ?, `population` = ?, `population_metro` = ?, `date` = ?, `company` = ?, `song` = ?, `status_id` = ? WHERE `id` = ?';
     $stmt = $link->prepare($sql);
-    $stmt->bind_param("ssddsssissi", $name, $aka, $lat, $lon, $html_desc, $category, $country, $population, $date, $status, $id);
+    $stmt->bind_param("ssddsisiisssii", $name, $aka, $lat, $lon, $html_desc, $category, $country, $population, $population_metro, $date, $company, $song, $status, $id);
     $result = $stmt->execute();
 }
 else {
@@ -105,9 +125,9 @@ else {
         }
     }
 
-    $sql = 'UPDATE `washere_places` SET `name` = ?, `aka` = ?, `lat` = ?, `lon` = ?, `html_desc` = ?, `category` = ?, `country` = ?, `population` = ?, `date` = ?, `status` = ?, `image_url` = ? WHERE `id` = ?';
+    $sql = 'UPDATE `washere_places` SET `name` = ?, `aka` = ?, `lat` = ?, `lon` = ?, `html_desc` = ?, `category_id` = ?, `country` = ?, `population` = ?, `population_metro` = ?, `date` = ?, `company` = ?, `song` = ?, `status_id` = ?, `image_url` = ? WHERE `id` = ?';
     $stmt = $link->prepare($sql);
-    $stmt->bind_param("ssddsssisssi", $name, $aka, $lat, $lon, $html_desc, $category, $country, $population, $date, $status, $image_url, $id);
+    $stmt->bind_param("ssddsisiisssisi", $name, $aka, $lat, $lon, $html_desc, $category, $country, $population, $population_metro, $date, $company, $song, $status, $image_url, $id);
     $stmt->send_long_data(5, $image);
     $result = $stmt->execute();
 } 

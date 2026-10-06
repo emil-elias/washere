@@ -29,7 +29,7 @@ if ($result->num_rows > 0) {
     $stats["total_places"] = 0;
 }
 
-$sql = 'SELECT COUNT(*) FROM washere_places WHERE category LIKE "%rural%"' . $andWhere;
+$sql = 'SELECT COUNT(*) FROM washere_places WHERE category_id BETWEEN 30 AND 39' . $andWhere;
 
 $result = $link->query($sql);
 
@@ -40,7 +40,7 @@ if ($result->num_rows > 0) {
     $stats["rural_places"] = 0;
 }
 
-$sql = 'SELECT COUNT(*) FROM washere_places WHERE category LIKE "%minor%"' . $andWhere;
+$sql = 'SELECT COUNT(*) FROM washere_places WHERE category_id BETWEEN 20 AND 29' . $andWhere;
 
 $result = $link->query($sql);
 
@@ -51,7 +51,7 @@ if ($result->num_rows > 0) {
     $stats["minor_places"] = 0;
 }
 
-$sql = 'SELECT COUNT(*) FROM washere_places WHERE category LIKE "%major%"' . $andWhere;
+$sql = 'SELECT COUNT(*) FROM washere_places WHERE category_id BETWEEN 0 AND 19' . $andWhere;
 
 $result = $link->query($sql);
 
@@ -62,7 +62,18 @@ if ($result->num_rows > 0) {
     $stats["major_places"] = 0;
 }
 
-$sql = 'SELECT COUNT(*) FROM washere_places WHERE category LIKE "%special%"' . $andWhere;
+$sql = 'SELECT COUNT(*) FROM washere_places WHERE category_id < 10' . $andWhere;
+
+$result = $link->query($sql);
+
+if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+    $stats["major_big_places"] = $row["COUNT(*)"];
+} else {
+    $stats["major_big_places"] = 0;
+}
+
+$sql = 'SELECT COUNT(*) FROM washere_places WHERE category_id IN (0, 10, 20, 30, 40, 50)' . $andWhere;
 
 $result = $link->query($sql);
 
@@ -73,7 +84,7 @@ if ($result->num_rows > 0) {
     $stats["special_places"] = 0;
 }
 
-$sql = 'SELECT COUNT(*) FROM washere_places WHERE category LIKE "%capital%"' . $andWhere;
+$sql = 'SELECT COUNT(*) FROM washere_places WHERE category_id IN (1, 11, 21, 31, 41, 51)' . $andWhere;
 
 $result = $link->query($sql);
 
@@ -82,6 +93,28 @@ if ($result->num_rows > 0) {
     $stats["capitals"] = $row["COUNT(*)"];
 } else {
     $stats["capitals"] = 0;
+}
+
+$sql = 'SELECT COUNT(*) FROM washere_places WHERE category_id BETWEEN 40 AND 49' . $andWhere;
+
+$result = $link->query($sql);
+
+if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+    $stats["terminals"] = $row["COUNT(*)"];
+} else {
+    $stats["terminals"] = 0;
+}
+
+$sql = 'SELECT COUNT(*) FROM washere_places WHERE category_id BETWEEN 50 AND 59' . $andWhere;
+
+$result = $link->query($sql);
+
+if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+    $stats["parks"] = $row["COUNT(*)"];
+} else {
+    $stats["parks"] = 0;
 }
 
 $sql = 'SELECT COUNT(*) FROM washere_countries WHERE valid = 1';

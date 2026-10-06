@@ -107,6 +107,16 @@ button {
     align-items: center;
 }
 
+.attribution {
+    font-size: smaller;
+    color: #c0c0c0;
+}
+
+.attribution a {
+    color: #c0c0c0;
+    text-decoration: none;
+}
+
 .horizontal hr {
     height: 0.85rem;
 }
@@ -116,6 +126,7 @@ button {
     color: #c0c0c0; 
     font-style: italic;
     min-width: 1rem;
+    font-weight: normal;
 }
 
 

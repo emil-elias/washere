@@ -58,28 +58,38 @@
         <textarea name="place_desc" id="place_desc"></textarea><br />
         Population: <br>
         <input type="number" name="place_population" id="place_population"><br>
+        Metro Population: <br>
+        <input type="number" name="place_metro_population" id="place_metro_population"><br>
         Date: <br>
         <input type="text" name="place_date" id="place_date"><br>
+        Company: <br>
+        <input type="text" name="place_company" id="place_company"><br>
+        Song: <br>
+        <input type="text" name="place_song" id="place_song"><br>
         Status: <br>
         <select name="place_status" id="place_status">
-          <option value="Visited">visited</option>
-          <option value="Stopped by">stopped by</option>
-          <option value="Layover">layover</option>
-          <option value="Lived">lived</option>
+          <option value=1>visited</option>
+          <option value=2>stayed overnight</option>
+          <option value=3>stopped by</option>
+          <option value=4>drove through</option>
+          <option value=5>layover / transfer</option>
+          <option value=6>departure / arrival</option>
+          <option value=0>lived</option>
         </select><br>
         Category:<br />
         <select name="place_category" id="place_category" required>
-          <option value="rural">rural/other</option>
-          <option value="minor">minor</option>
-          <option value="major_medium">major medium</option>
-          <option value="major_big">major big</option>
-          <option value="airport">airport/layover</option>
+          <option value=32>rural/other</option>
+          <option value=22>minor</option>
+          <option value=12>major medium</option>
+          <option value=2>major big</option>
+          <option value=42>terminal</option>
+          <option value=52>park</option>
           </select><br />
         Special/Capital:<br />
         <select name="place_special" id="place_special" required>
-          <option value="none">none</option>
-          <option value="special">special</option>
-          <option value="capital">capital</option></select
+          <option value=0>none</option>
+          <option value=2>special</option>
+          <option value=1>capital</option></select
         ><br />
         Image:<br />
         URL: <input type="text" name="place_image_url" id="place_image_url" /><br />
