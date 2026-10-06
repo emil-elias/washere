@@ -74,19 +74,28 @@
             var place_country = place.country;
             var place_desc = place.html_desc;
             var place_population = parseInt(place.population);
+            var place_population_metro = parseInt(place.population_metro);
             var place_date = place.date;
-            var place_status = place.status;
-            var place_category = place.category;
-            var place_special = "none";
+            var place_company = place.company;
+            var place_song = place.song;
+            var place_status = place.status_id;
+            var place_category = place.category_id;
+            var place_special = 0;
             var old_place_image_url = place.image_url;
 
-            if (place_category.includes("special")) {
-              place_special = "special";
-              place_category = place_category.replace("_special", "");
-            } else if (place_category.includes("capital")) {
-              place_special = "capital";
-              place_category = place_category.replace("_capital", "");
+            
+
+            if (place_category.toString().endsWith("0")) {
+              place_special = 2;
+              place_category += 2;
+            } else if (place_category.toString().endsWith("1")) {
+              place_special = 1;
+              place_category += 1;
             }
+
+            console.log("place_category: " + place_category);
+            console.log("place_special: " + place_special);
+            console.log("place_status: " + place_status);
 
             const form = document.createElement("form");
             form.method = "post";
@@ -113,28 +122,38 @@
                         <textarea name="place_desc" id="place_desc_${place_id}">${place_desc}</textarea><br />
                         Population: <br>
                         <input type="number" name="place_population" id="place_population_${place_id}" value="${place_population}"><br>
+                        Metro Population: <br>
+                        <input type="number" name="place_metro_population" id="place_metro_population_${place_id}" value="${place_population_metro}"><br>
                         Date: <br>
                         <input type="text" name="place_date" id="place_date_${place_id}" value="${place_date}"><br>
+                        Company: <br>
+                        <input type="text" name="place_company" id="place_company_${place_id}" value="${place_company}"><br>
+                        Song: <br>
+                        <input type="text" name="place_song" id="place_song_${place_id}" value="${place_song}"><br>
                         Status: <br>
-                        <select name="place_status" id="place_status_${place_id}" value="${place_status}">
-                          <option value="Visited">visited</option>
-                          <option value="Stopped by">stopped by</option>
-                          <option value="Layover">layover</option>
-                          <option value="Lived">lived</option>
+                        <select name="place_status" id="place_status_${place_id}">
+                          <option value=1>visited</option>
+                          <option value=2>stayed overnight</option>
+                          <option value=3>stopped by</option>
+                          <option value=4>drove through</option>
+                          <option value=5>layover / transfer</option>
+                          <option value=6>departure / arrival</option>
+                          <option value=0>lived</option>
                         </select><br>
                         Category:<br />
                         <select name="place_category" id="place_category_${place_id}" required>
-                          <option value="rural">rural/other</option>
-                          <option value="minor">minor</option>
-                          <option value="major_medium">major medium</option>
-                          <option value="major_big">major big</option>
-                          <option value="airport">airport/layover</option>
+                          <option value=32>rural/other</option>
+                          <option value=22>minor</option>
+                          <option value=12>major medium</option>
+                          <option value=2>major big</option>
+                          <option value=42>terminal</option>
+                          <option value=52>park</option>
                           </select><br />
                         Special/Capital:<br />
                         <select name="place_special" id="place_special_${place_id}" required>
-                          <option value="none">none</option>
-                          <option value="special">special</option>
-                          <option value="capital">capital</option></select
+                          <option value=0>none</option>
+                          <option value=2>special</option>
+                          <option value=1>capital</option></select
                         ><br />
                         Image: <a href="${old_place_image_url}" target="_blank">${old_place_image_url}</a><br />
                         <input type="radio" id="place_image_keep" name="place_image_option" value="keep" checked> keep current<br>
@@ -149,10 +168,10 @@
 
             document.getElementById("forms").appendChild(form);
             document.getElementById(`place_category_${place_id}`).value =
-              place_category;
+              place_category.toString();
             document.getElementById(`place_special_${place_id}`).value =
-              place_special;
-            document.getElementById(`place_status_${place_id}`).value = place.status;
+              place_special.toString();
+            document.getElementById(`place_status_${place_id}`).value = place_status.toString();
 
             const resultDiv = document.createElement("div");
             resultDiv.id = `response_${place_id}`;
