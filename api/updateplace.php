@@ -19,6 +19,20 @@ $id = $_POST['place_id'];
 $name = $_POST['place_name'];
 $name = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $name);
 
+if (isset($_POST['place_name_native'])) {
+    $name_native = $_POST['place_name_native'];
+    $name_native = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $name_native);
+} else {
+    $name_native = "";
+}
+
+if (isset($_POST['place_suffix'])) {
+    $suffix = $_POST['place_suffix'];
+    $suffix = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $suffix);
+} else {
+    $suffix = "";
+}
+
 if (isset($_POST['place_aka'])) {
     $aka = $_POST['place_aka'];
     $aka = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $aka);
@@ -95,9 +109,9 @@ $link = connectDB();
 
 
 if ($_POST['place_image_option'] == "keep") {
-    $sql = 'UPDATE `washere_places` SET `name` = ?, `aka` = ?, `lat` = ?, `lon` = ?, `html_desc` = ?, `category_id` = ?, `country` = ?, `population` = ?, `population_metro` = ?, `date` = ?, `company` = ?, `song` = ?, `status_id` = ? WHERE `id` = ?';
+    $sql = 'UPDATE `washere_places` SET `name` = ?, `name_native` = ?, `suffix` = ?, `aka` = ?, `lat` = ?, `lon` = ?, `html_desc` = ?, `category_id` = ?, `country` = ?, `population` = ?, `population_metro` = ?, `date` = ?, `company` = ?, `song` = ?, `status_id` = ? WHERE `id` = ?';
     $stmt = $link->prepare($sql);
-    $stmt->bind_param("ssddsisiisssii", $name, $aka, $lat, $lon, $html_desc, $category, $country, $population, $population_metro, $date, $company, $song, $status, $id);
+    $stmt->bind_param("ssssddsisiisssii", $name, $name_native, $suffix, $aka, $lat, $lon, $html_desc, $category, $country, $population, $population_metro, $date, $company, $song, $status, $id);
     $result = $stmt->execute();
 }
 else {
@@ -125,9 +139,9 @@ else {
         }
     }
 
-    $sql = 'UPDATE `washere_places` SET `name` = ?, `aka` = ?, `lat` = ?, `lon` = ?, `html_desc` = ?, `category_id` = ?, `country` = ?, `population` = ?, `population_metro` = ?, `date` = ?, `company` = ?, `song` = ?, `status_id` = ?, `image_url` = ? WHERE `id` = ?';
+    $sql = 'UPDATE `washere_places` SET `name` = ?, `name_native` = ?, `suffix` = ?, `aka` = ?, `lat` = ?, `lon` = ?, `html_desc` = ?, `category_id` = ?, `country` = ?, `population` = ?, `population_metro` = ?, `date` = ?, `company` = ?, `song` = ?, `status_id` = ?, `image_url` = ? WHERE `id` = ?';
     $stmt = $link->prepare($sql);
-    $stmt->bind_param("ssddsisiisssisi", $name, $aka, $lat, $lon, $html_desc, $category, $country, $population, $population_metro, $date, $company, $song, $status, $image_url, $id);
+    $stmt->bind_param("ssssddsisiisssisi", $name, $name_native, $suffix, $aka, $lat, $lon, $html_desc, $category, $country, $population, $population_metro, $date, $company, $song, $status, $image_url, $id);
     $stmt->send_long_data(5, $image);
     $result = $stmt->execute();
 } 

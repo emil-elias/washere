@@ -11,7 +11,7 @@ if (isset($_GET['y'])) {
     $year = $_GET['y'];
 }
 
-$sql = 'SELECT washere_places.id AS `id`, `name`, `aka`, `lat`, `lon`, `html_desc`, `category_id`, washere_categories.value AS `category`, `country`, `population`, `population_metro`, `date`, `status_id`, washere_status.value AS `status`, `image_url` 
+$sql = 'SELECT washere_places.id AS `id`, `name`, `name_native`, `suffix`, `aka`, `lat`, `lon`, `html_desc`, `category_id`, washere_categories.value AS `category`, `country`, `population`, `population_metro`, `date`, `status_id`, washere_status.value AS `status`, `image_url` 
 FROM `washere_places` 
 INNER JOIN `washere_status` ON washere_places.status_id=washere_status.id
 INNER JOIN `washere_categories` ON washere_places.category_id=washere_categories.id';
@@ -39,7 +39,7 @@ if ($result && $result->num_rows > 0) {
             $image = base64_encode($row["image"]);
         }*/
 
-        $place = array("id" => $row["id"], "name" => $row["name"], "aka" => $row["aka"], "lat" => $row["lat"], "lon" => $row["lon"], "html_desc" => nl2br($row["html_desc"]), "category" => $row["category"], "category_id" => $row["category_id"], "country" => $row["country"], "population" => $row["population"], "population_metro" => $row["population_metro"], "date" => $row["date"], "status" => $row["status"], "status_id" => $row["status_id"], "image_url" => $row["image_url"]);
+        $place = array("id" => $row["id"], "name" => $row["name"], "name_native" => $row["name_native"], "suffix" => $row["suffix"], "aka" => $row["aka"], "lat" => $row["lat"], "lon" => $row["lon"], "html_desc" => nl2br($row["html_desc"]), "category" => $row["category"], "category_id" => $row["category_id"], "country" => $row["country"], "population" => $row["population"], "population_metro" => $row["population_metro"], "date" => $row["date"], "status" => $row["status"], "status_id" => $row["status_id"], "image_url" => $row["image_url"]);
         $places[] = $place;
     }
 }

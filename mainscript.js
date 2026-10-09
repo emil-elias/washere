@@ -83,6 +83,9 @@ fetch(`./api/getplaces.php${queries}`)
     places.forEach((place) => {
       if (!place.lat || !place.lon) return;
 
+      let nameString = place.name_native != "" ? `${place.name_native}<br>` : "";
+      nameString += place.category_id >= 40 && place.category_id < 50 ? `› ${place.name} ‹` : place.name;
+      let suffixString = place.suffix != "" ? `<span class="detail-text"> ${place.suffix}</span>` : "";
       let akaString = place.aka != "" ? `<i>${place.aka}</i>` : ``;
       //let capitalString = place.category.includes("capital") ? " (Capital)" : ""; 
       let capitalString = "";
@@ -106,7 +109,7 @@ fetch(`./api/getplaces.php${queries}`)
 
       let marker = L.marker([place.lat, place.lon], { icon: icon }).addTo(map);
 
-      if (place.status_id != "1" && place.status_id != "0") {
+      if (!place.status_id.endsWith("1") && !place.status_id.endsWith("0")) {
         marker.setOpacity(0.5);
       }
 
@@ -114,7 +117,7 @@ fetch(`./api/getplaces.php${queries}`)
         marker.bindPopup(
           `<img src='${place.image_url}' onclick='showImg("${place.image_url}")'>
           <div class='popup-textcontent' style='min-width: 15rem; max-width: 15rem'>
-          <h3>${place.name}</h3>
+          <h3>${nameString}${suffixString}</h3>
           ${akaString}
           <hr style="margin-top: 1rem; margin-bottom: 1rem; border: none; border-top: 1px solid #333" />
           Country: ${place.country}${capitalString}
@@ -126,7 +129,7 @@ fetch(`./api/getplaces.php${queries}`)
       } else {
         marker.bindPopup(
           `<div class='popup-textcontent'>
-          <h3>${place.name}</h3>
+          <h3>${nameString}${suffixString}</h3>
           ${akaString}
           <hr style="margin-top: 1rem; margin-bottom: 1rem; border: none; border-top: 1px solid #333" />
           Country: ${place.country}${capitalString}
