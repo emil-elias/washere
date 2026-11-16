@@ -1,7 +1,8 @@
 <?php
 
 $hashed_control_value = "";
-$domain = "https://emilwil.de/washere";
+$domain = "";
+
 
 function connectDB()
 {

@@ -18,7 +18,7 @@ if (isset($_GET['y'])) {
 
 $stats = array();
 
-$sql = 'SELECT COUNT(*) FROM washere_places WHERE 1' . $andWhere;
+$sql = 'SELECT COUNT(*) FROM washere_places WHERE valid = 1' . $andWhere;
 
 $result = $link->query($sql);
 

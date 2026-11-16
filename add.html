@@ -42,6 +42,10 @@
       <p>
         Name:<br />
         <input type="text" name="place_name" id="place_name" required /><br />
+        Name in native script:<br />
+        <input type="text" name="place_name_native" id="place_name_native"><br/>
+        Suffix:<br />
+        <input type="text" name="place_suffix" id="place_suffix"><br/>
         Aka:<br />
         <input type="text" name="place_aka" id="place_aka"><br/>
         Coordinates (lat,long):<br />
@@ -73,8 +77,13 @@
           <option value=3>stopped by</option>
           <option value=4>drove through</option>
           <option value=5>layover / transfer</option>
-          <option value=6>departure / arrival</option>
+          <option value=6>arrived / departed</option>
+          <option value=7>departed / arrived</option>
+          <option value=8>arrived</option>
+          <option value=9>departed</option>
           <option value=0>lived</option>
+          <option value=10>lived / visited</option>
+          <option value=11>visited / lived</option>
         </select><br>
         Category:<br />
         <select name="place_category" id="place_category" required>

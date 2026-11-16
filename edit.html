@@ -69,6 +69,8 @@
           data.forEach((place) => {
             var place_id = place.id;
             var place_name = place.name;
+            var place_name_native = place.name_native;
+            var place_suffix = place.suffix;
             var place_aka = place.aka;
             var place_coords = place.lat + ", " + place.lon;
             var place_country = place.country;
@@ -106,6 +108,10 @@
                       <p>
                         Name:<br />
                         <input type="text" name="place_name" id="place_name_${place_id}" value="${place_name}" required /><br />
+                        Name in native script:<br />
+                        <input type="text" name="place_name_native" id="place_name_native_${place_id}" value="${place_name_native}"><br/>
+                        Suffix:<br />
+                        <input type="text" name="place_suffix" id="place_suffix_${place_id}" value="${place_suffix}"><br/>
                         Aka:<br />
                         <input type="text" name="place_aka" id="place_aka_${place_id}" value="${place_aka}"><br/>
                         Coordinates (lat,long):<br />
@@ -137,8 +143,13 @@
                           <option value=3>stopped by</option>
                           <option value=4>drove through</option>
                           <option value=5>layover / transfer</option>
-                          <option value=6>departure / arrival</option>
+                          <option value=6>arrived / departed</option>
+                          <option value=7>departed / arrived</option>
+                          <option value=8>arrived</option>
+                          <option value=9>departed</option>
                           <option value=0>lived</option>
+                          <option value=10>lived / visited</option>
+                          <option value=11>visited / lived</option>
                         </select><br>
                         Category:<br />
                         <select name="place_category" id="place_category_${place_id}" required>
