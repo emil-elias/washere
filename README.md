@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-### Don't publish this repository, it has database credentials in the commit history!
-> Create a new repository, if you want to publish this.
-=======
 # washere
 
 A website displaying a collection of visited places pulled from a database on a map
@@ -17,4 +13,3 @@ A website displaying a collection of visited places pulled from a database on a 
 7) You can edit and delete places using the form on `<your-server>/washere/edit`
 8) Countries need to be added manually in the database in the table `washere_countries`
 9) If you want to display country outlines, you need to add a corresponding geojson file to the `countries` folder. The file needs to have the same name as the entry in your `washere_countries` table, omitting spaces and ignoring casing. A good source for country outlines: https://github.com/georgique/world-geojson
->>>>>>> 4a09e4a9b8baa597e404e119de15dbf759b9796a
