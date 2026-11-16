@@ -3,9 +3,11 @@ include_once '../../connectdb.php';
 
 $link = connectDB();
 
-$sql = 'SELECT * FROM `washere_places` WHERE `category_id` < 30 ORDER BY `population` DESC';
+$sql = 'SELECT *,(population + COALESCE(NULLIF(population_metro, 0), population)) / 2.0 AS mean_population FROM `washere_places` WHERE `category_id` < 30 ORDER BY `mean_population` DESC';
 
 $result = $link->query($sql);
+
+//$reference = json_decode(file_get_contents('reference.json'), true);
 
 $places = array();
 $labels = array(
@@ -14,7 +16,99 @@ $labels = array(
     array("name" => "Übernachtet", "color" => "#F59E0B"),
     array("name" => "Vorbeigeschaut", "color" => "#EF4444"),
     array("name" => "Durchgefahren", "color" => "#EC4899"),
+    array("name" => "Solo", "color" => "#64748B"),
+    array("name" => "mit Familie", "color" => "#64748B"),
+    array("name" => "mit Freunden", "color" => "#64748B"),
+    array("name" => "mit Karlotta", "color" => "#64748B"),
+    array("name" => "mit Lotte", "color" => "#64748B"),
+    array("name" => "Akademisch", "color" => "#64748B"),
+    array("name" => "Beruflich", "color" => "#64748B"),
 );
+
+function translate_status($status_id)
+{
+    switch ($status_id) {
+        case 0:
+            return "Gelebt";
+        case 1:
+            return "Besucht";
+        case 2:
+            return "Übernachtet";
+        case 3:
+            return "Vorbeigeschaut";
+        case 4:
+            return "Durchgefahren";
+        default:
+            return "Besucht";
+    }
+}
+
+function translate_country($country)
+{
+
+    $capital_string = "";
+
+    $is_capital = str_contains($country, "(Capital)");
+
+    if ($is_capital) {
+        $country = trim(str_replace("(Capital)", "", $country));
+        $capital_string = " (Hauptstadt)";
+    }
+
+    $country_translations = array(
+        "Germany" => "Deutschland",
+        "United Kingdom" => "Vereinigtes Königreich",
+        "United Kingdom (England)" => "England, Vereinigtes Königreich",
+        "United Kingdom (Scotland)" => "Schottland, Vereinigtes Königreich",
+        "Italy" => "Italien",
+        "France" => "Frankreich",
+        "Spain" => "Spanien",
+        "Poland" => "Polen",
+        "Belgium" => "Belgien",
+        "Netherlands" => "Niederlande",
+        "Denmark" => "Dänemark",
+        "Norway" => "Norwegen",
+        "Sweden" => "Schweden",
+        "Czech Republic" => "Tschechien",
+        "Austria" => "Österreich",
+        "Switzerland" => "Schweiz",
+        "Slovakia" => "Slowakei",
+        "Slovenia" => "Slowenien",
+        "Hungary" => "Ungarn",
+        "Vatican City" => "Vatikanstadt",
+        "Turkey" => "Türkei",
+        "Cambodia" => "Kambodscha",
+        "Singapore Republic" => "Singapur",
+    );
+
+    $translated_country = isset($country_translations[$country]) ? $country_translations[$country] : $country;
+    return $translated_country . $capital_string;
+}
+
+function translate_months($date) {
+    $month_translations = array(
+        "Jan" => "Januar",
+        "Feb" => "Februar",
+        "Mar" => "März",
+        "Apr" => "April",
+        "May" => "Mai",
+        "Jun" => "Juni",
+        "Jul" => "Juli",
+        "Aug" => "August",
+        "Sep" => "September",
+        "Oct" => "Oktober",
+        "Nov" => "November",
+        "Dec" => "Dezember",
+        "many times" => "sehr oft",
+        "multiple times" => "mehrmals",
+    );
+
+    foreach ($month_translations as $english_month => $german_month) {
+        $date = str_replace($english_month, $german_month, $date);
+    }
+
+    return $date;
+}
 
 if ($result && $result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
@@ -34,20 +128,28 @@ if ($result && $result->num_rows > 0) {
         $description = "";
 
         if ($row["aka"] != "") {
-            $description .= "## " . $row["aka"] . "\n";
+            $description .= "> ## " . $row["aka"] . "\n\n";
         }
 
         if ($row["date"] != "") {
-            $description .= $row["date"] . "\n";
+            $split_date = explode(",", $row["date"]);
+            $status = translate_status($row["status_id"]);
+            $description .= "> **" . $status . ":**\n";
+            foreach ($split_date as $date) {
+                $description .= "> - " . translate_months(trim($date)) . "\n";
+            }
+            $description .= "\n";
         }
 
         if ($row["population"] > 0) {
-            $description .= "Einwohner: " . number_format(intval($row["population"]), 0, ',', '.');
+            $description .= "> **Einwohner:**\n";
+            $description .= "> - Stadt: " . number_format(intval($row["population"]), 0, ',', '.') . "\n";
+            if ($row["population_metro"] > 0) {
+                $description .= "> - Metropolregion: " . number_format(intval($row["population_metro"]), 0, ',', '.') . "\n";
+            }
         }
 
-        if ($row["population_metro"] > 0) {
-            $description .= " (" . number_format(intval($row["population_metro"]), 0, ',', '.') . ")";
-        }
+
 
         $place_labels = array();
 
@@ -63,9 +165,26 @@ if ($result && $result->num_rows > 0) {
             $place_labels = array("Durchgefahren");
         }
 
+        if ($row["company"] == "") {
+            $place_labels[] = "Solo";
+        }
+
+
+        if (str_contains($row["company"], "Family") || str_contains($row["company"], "Mama") || str_contains($row["company"], "Papa") || str_contains($row["company"], "Elisa") || str_contains($row["company"], "Mattis") || str_contains($row["company"], "Malina") || str_contains($row["company"], "Oma") || str_contains($row["company"], "Opa")) {
+            $place_labels[] = "mit Familie";
+        }
+
+        if (str_contains($row["company"], "Karlotta")) {
+            $place_labels[] = "mit Karlotta";
+        }
+
+        if (str_contains($row["company"], "Lotte")) {
+            $place_labels[] = "mit Lotte";
+        }
+
         $category = "Ortschaft";
 
-        if (intval($row["population"]) >= 5000000) {
+        if (intval($row["mean_population"]) >= 5000000) {
             $category = "Megacity";
         } else if (intval($row["population"]) >= 1000000) {
             $category = "Millionenstadt";
@@ -84,7 +203,7 @@ if ($result && $result->num_rows > 0) {
             "description" => $description,
             "lat" => floatval($row["lat"]),
             "lng" => floatval($row["lon"]),
-            "address" => $row["country"],
+            "address" => $name . ", " . translate_country($row["country"]),
             "notes" => null,
             "price" => null,
             "currency" => null,
@@ -115,13 +234,13 @@ $collection = array(
 );
 
 header('Content-Type: application/json');
-header("Content-Type: application/force-download");
-header("Content-Type: application/download");
-header("Content-Disposition: washere.trekcollection.json");
-header("Content-Disposition: filename=washere.trekcollection.json");
+//header("Content-Type: application/force-download");
+//header("Content-Type: application/download");
+//header("Content-Disposition: washere.trekcollection.json");
+//header("Content-Disposition: filename=washere.trekcollection.json");
 
 
-echo json_encode($collection, JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
+echo json_encode($collection, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
 closeDBConnection($link);
 

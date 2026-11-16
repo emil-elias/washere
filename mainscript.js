@@ -93,8 +93,12 @@ fetch(`./api/getplaces.php${queries}`)
       let dateString = place.date != "" ? `<br>${place.status}: ${place.date}` : "";
       let descString = place.html_desc != "" ? `<br><hr style="margin-top: 1rem; margin-bottom: 1rem; border: none; border-top: 1px solid #333" />${place.html_desc}` : "";
 
-      if (populationString != "" && place.population_metro != "0") {
-        populationString += ` (${Number(place.population_metro).toLocaleString('en-US')})`;
+      if (populationString != "") {
+        if (place.population_metro != "0") {
+          populationString += ` (${Number(place.population_metro).toLocaleString('en-US')})`;
+        } else if (place.population_urban != "0") {
+          populationString += ` (${Number(place.population_urban).toLocaleString('en-US')})`;
+        }
       }
 
       let icon = L.icon({
@@ -202,9 +206,9 @@ function determineIcon(category_id) {
         return "images/diamond-white.svg";
       case 30:
         return "images/diamond-gold.svg";
-      case 42: 
+      case 42:
         return "images/square-white.svg";
-      case 40: 
+      case 40:
         return "images/square-gold.svg";
       case 52:
         return "images/circle-white.svg";
