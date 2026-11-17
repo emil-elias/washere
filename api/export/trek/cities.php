@@ -140,8 +140,19 @@ if ($result && $result->num_rows > 0) {
 
         $description = "";
 
-        if ($row["aka"] != "") {
-            $description .= "> ## " . $row["aka"] . "\n\n";
+        if ($row["aka"] != "" || $row["name_other"] != "") {
+            $description .= "> ## ";
+            if ($row["name_other"] != "") {
+                $description .= $row["name_other"];
+            }
+            if ($row["aka"] != "" && $row["name_other"] != "") {
+                $description .= " • ";
+            }
+            if ($row["aka"] != "") {
+                $description .= $row["aka"];
+            }
+            
+            $description .= "\n\n";
         }
 
         if ($row["date"] != "") {
