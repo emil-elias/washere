@@ -83,12 +83,21 @@ fetch(`./api/getplaces.php${queries}`)
     places.forEach((place) => {
       if (!place.lat || !place.lon) return;
 
-      let nameString = place.name_native != "" ? `${place.name_native}<br>` : "";
-      nameString += place.category_id >= 40 && place.category_id < 50 ? `› ${place.name} ‹` : place.name;
+      let nameString = "";
+      if (place.name_native && place.name_native.trim() !== "") {
+        if (place.name_native.includes("•")) {
+          let split = place.name_native.split("•");
+          nameString = `<span id="cycle_text2">${split[0]}</span><br>`;
+        } else {
+          nameString = `${place.name_native}<br>`;
+        }
+      }
+      let name = place.name_english != "" || place.name_other != "" ? `<span id="cycle_text">${place.name}</span>` : place.name;
+      nameString += place.category_id >= 40 && place.category_id < 50 ? `› ${name} ‹` : name;
       let suffixString = place.suffix != "" ? `<span class="detail-text"> ${place.suffix}</span>` : "";
       let akaString = place.aka != "" ? `<i>${place.aka}</i>` : ``;
       //let capitalString = place.category.includes("capital") ? " (Capital)" : ""; 
-      let capitalString = "";
+      let regionString = place.region != "" ? `<br>Region: ${place.region}` : "";
       let populationString = place.population != "0" ? `<br>Population: ${Number(place.population).toLocaleString('en-US')}` : "";
       let dateString = place.date != "" ? `<br>${place.status}: ${place.date}` : "";
       let descString = place.html_desc != "" ? `<br><hr style="margin-top: 1rem; margin-bottom: 1rem; border: none; border-top: 1px solid #333" />${place.html_desc}` : "";
@@ -124,7 +133,8 @@ fetch(`./api/getplaces.php${queries}`)
           <h3>${nameString}${suffixString}</h3>
           ${akaString}
           <hr style="margin-top: 1rem; margin-bottom: 1rem; border: none; border-top: 1px solid #333" />
-          Country: ${place.country}${capitalString}
+          Country: ${place.country}
+          ${regionString}
           ${populationString}
           ${dateString}
           ${descString}
@@ -136,18 +146,128 @@ fetch(`./api/getplaces.php${queries}`)
           <h3>${nameString}${suffixString}</h3>
           ${akaString}
           <hr style="margin-top: 1rem; margin-bottom: 1rem; border: none; border-top: 1px solid #333" />
-          Country: ${place.country}${capitalString}
+          Country: ${place.country}
+          ${regionString}
           ${populationString}
           ${dateString}
           ${descString}
           </div>`
         );
       }
+
+      marker.on("popupopen", () => startNameCycler(marker, place));
+      marker.on("popupclose", () => stopNameCycler(marker));
     });
 
     document.getElementById("loader-container").style.display = "none";
   })
   .catch((error) => console.log(error));
+
+function startNameCycler(marker, place) {
+  stopNameCycler(marker);
+
+  const cycleMain = buildCycleValues([place.name, place.name_english, place.name_other]);
+  const cycleNative = buildCycleValues([place.name_native]);
+
+  const setFade = (element, value, onComplete) => {
+    if (!element) return;
+
+    element.style.transition = "opacity 0.75s ease-in-out";
+    element.style.opacity = "0";
+
+    const timeoutId = window.setTimeout(() => {
+      if (!element.isConnected) return;
+      element.textContent = value;
+      element.style.opacity = "1";
+      if (onComplete) onComplete();
+    }, 750);
+
+    return timeoutId;
+  };
+
+  const cycleElement = (elementSelector, values, stateKey) => {
+    if (!values || values.length < 2) return;
+
+    const element = marker.getPopup()?.getElement()?.querySelector(elementSelector);
+    if (!element) return;
+
+    const state = marker[stateKey] || { index: 0 };
+    let nextIndex = state.index;
+    const currentValue = element.textContent?.trim() || values[0];
+
+    const currentIndex = values.indexOf(currentValue);
+    if (currentIndex !== -1) {
+      nextIndex = (currentIndex + 1) % values.length;
+    }
+
+    state.index = nextIndex;
+    marker[stateKey] = state;
+
+    const nextValue = values[nextIndex];
+    marker[`${stateKey}Timeout`] = setFade(element, nextValue);
+  };
+
+  if (cycleMain.length > 1) {
+    marker._mainCycleState = { index: 0 };
+    marker._nameCyclerInterval = window.setInterval(() => {
+      cycleElement("#cycle_text", cycleMain, "_mainCycleState");
+    }, 5000);
+  }
+
+  if (cycleNative.length > 1) {
+    marker._nativeCycleState = { index: 0 };
+    marker._nameCyclerInterval2 = window.setInterval(() => {
+      cycleElement("#cycle_text2", cycleNative, "_nativeCycleState");
+    }, 5000);
+  }
+}
+
+function stopNameCycler(marker) {
+  if (marker._nameCyclerInterval) {
+    window.clearInterval(marker._nameCyclerInterval);
+    delete marker._nameCyclerInterval;
+  }
+
+  if (marker._nameCyclerInterval2) {
+    window.clearInterval(marker._nameCyclerInterval2);
+    delete marker._nameCyclerInterval2;
+  }
+
+  if (marker._mainCycleState) {
+    delete marker._mainCycleState;
+  }
+
+  if (marker._nativeCycleState) {
+    delete marker._nativeCycleState;
+  }
+
+  if (marker._mainCycleStateTimeout) {
+    window.clearTimeout(marker._mainCycleStateTimeout);
+    delete marker._mainCycleStateTimeout;
+  }
+
+  if (marker._nativeCycleStateTimeout) {
+    window.clearTimeout(marker._nativeCycleStateTimeout);
+    delete marker._nativeCycleStateTimeout;
+  }
+}
+
+function buildCycleValues(values) {
+  const unique = [];
+
+  values
+    .filter(Boolean)
+    .flatMap((value) => value.split("•"))
+    .map((value) => value.trim())
+    .filter((value) => value && value !== "")
+    .forEach((value) => {
+      if (!unique.includes(value)) {
+        unique.push(value);
+      }
+    });
+
+  return unique;
+}
 
 fetch(`./api/stats/total.php${queries}`)
   .then((response) => response.json())

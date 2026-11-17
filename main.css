@@ -228,6 +228,17 @@ a:hover {
     transform: rotate(180deg);
 }
 
+#cycle_text,
+#cycle_text2 {
+    display: inline-block;
+    opacity: 1;
+    transition: opacity 0.75s ease-in-out;
+}
+
+.cycle-text-fading {
+    opacity: 0;
+}
+
 @media screen and (max-width: 550px) {
     #legend {
         width: calc(100vw - 4rem);

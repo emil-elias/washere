@@ -3,7 +3,19 @@ include_once '../../connectdb.php';
 
 $link = connectDB();
 
-$sql = 'SELECT *,(population + COALESCE(NULLIF(population_metro, 0), population)) / 2.0 AS mean_population FROM `washere_places` WHERE `category_id` < 30 ORDER BY `mean_population` DESC';
+$sql = 'SELECT *,
+            CASE
+                WHEN population_urban > 0 AND population_metro > 0
+                    THEN (population + population_urban + population_metro) / 3.0
+                WHEN population_metro > 0
+                    THEN (population + population_metro) / 2.0
+                WHEN population_urban > 0
+                    THEN (population + population_urban) / 2.0
+                ELSE population
+            END AS population_mean 
+        FROM `washere_places` 
+        WHERE `category_id` < 30 
+        ORDER BY `population_mean` DESC';
 
 $result = $link->query($sql);
 
@@ -85,7 +97,8 @@ function translate_country($country)
     return $translated_country . $capital_string;
 }
 
-function translate_months($date) {
+function translate_months($date)
+{
     $month_translations = array(
         "Jan" => "Januar",
         "Feb" => "Februar",
@@ -144,6 +157,9 @@ if ($result && $result->num_rows > 0) {
         if ($row["population"] > 0) {
             $description .= "> **Einwohner:**\n";
             $description .= "> - Stadt: " . number_format(intval($row["population"]), 0, ',', '.') . "\n";
+            if ($row["population_urban"] > 0) {
+                $description .= "> - Agglomeration: " . number_format(intval($row["population_urban"]), 0, ',', '.') . "\n";
+            }
             if ($row["population_metro"] > 0) {
                 $description .= "> - Metropolregion: " . number_format(intval($row["population_metro"]), 0, ',', '.') . "\n";
             }
@@ -157,10 +173,16 @@ if ($result && $result->num_rows > 0) {
             $place_labels = array("Gelebt", "Besucht", "Übernachtet");
         } else if ($row["status_id"] == 1) {
             $place_labels = array("Besucht");
+            if ($row["overnight"] == 1) {
+                $place_labels[] = "Übernachtet";
+            }
         } else if ($row["status_id"] == 2) {
             $place_labels = array("Übernachtet");
         } else if ($row["status_id"] == 3) {
             $place_labels = array("Vorbeigeschaut");
+            if ($row["overnight"] == 1) {
+                $place_labels[] = "Übernachtet";
+            }
         } else if ($row["status_id"] == 4) {
             $place_labels = array("Durchgefahren");
         }
@@ -184,7 +206,7 @@ if ($result && $result->num_rows > 0) {
 
         $category = "Ortschaft";
 
-        if (intval($row["mean_population"]) >= 5000000) {
+        if (intval($row["population_mean"]) >= 5000000) {
             $category = "Megacity";
         } else if (intval($row["population"]) >= 1000000) {
             $category = "Millionenstadt";
@@ -196,14 +218,26 @@ if ($result && $result->num_rows > 0) {
             $category = "Kleinstadt";
         }
 
+        $address = $row["name"];
 
+        if ($row["name_german"] != "") {
+            $address = $row["name_german"];
+        }
+
+        if ($row["region"] != "") {
+            $address .= ", " . $row["region"];
+        }
+
+        if ($row["country"] != "") {
+            $address .= ", " . translate_country($row["country"]);
+        }
 
         $place = array(
             "name" => $name,
             "description" => $description,
             "lat" => floatval($row["lat"]),
             "lng" => floatval($row["lon"]),
-            "address" => $name . ", " . translate_country($row["country"]),
+            "address" => $address,
             "notes" => null,
             "price" => null,
             "currency" => null,
@@ -243,5 +277,3 @@ header('Content-Type: application/json');
 echo json_encode($collection, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
 closeDBConnection($link);
-
-?>
